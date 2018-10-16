@@ -80,12 +80,28 @@
 <script>
   import axios from 'axios'
 
+  function go(posts, cb) {
+    var firstResult = posts.filter(day => day.timetableType === 'LOGISTICS');
+    return cb(firstResult);
+  }
+
+  function gofinal(post, cb) {
+    var secondResult = post.filter(day => day.defaultTimetableTimeSlotConfigurations.length > 0);
+    for (var i = 0; i < secondResult.length; i++) {
+      var resultf = secondResult[i].defaultTimetableTimeSlotConfigurations;
+    }
+    return cb(resultf);
+  }
+
   export default {
     name: 'PartTwo',
 
     data() {
       return {
         posts: [],
+        firstResultado: [],
+        secondResultado: [],
+        thirdResultado: [],
       }
     },
 
@@ -94,13 +110,13 @@
         'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJqdWFuZGllZ29AbXJqZWZmYXBwLmNvbSIsInJvbGVzIjpbIlJPTEVfQkFDS09GRklDRSJdLCJuYW1lIjoianVhbiBkaWVnbyIsImlzcyI6ImJhY2tvZmZpY2UubXJqZWZmYXBwLm5ldCIsImlkIjoiYWEwNDdhNDAtNGM1Yi00ZjZjLWEwNTktMmQwMjFmY2UxYWMxIiwiZnVsbG5hbWUiOiJqdWFuIGRpZWdvIGFwZWxsIiwidHlwZSI6InVzZXIiLCJleHAiOjE1NDAwMzQ2OTUsImlhdCI6MTUzOTQyOTg5NSwianRpIjoiNzcyM2Y3NDgtN2Y4Mi00NzNlLTg5NTctMDI2YjEwYzlmMDg0IiwiZW1haWwiOiJqdWFuZGllZ29AbXJqZWZmYXBwLmNvbSJ9.BMAYtAERPWP5Fw7eR-qB53_aO5o0Eo9smArh9BZ0xLwz6kiJgVe68EESK74X6YXHwxkMXfZyS8e61D8Q4R8VaA';
       const headtoken = 'Bearer '.concat(token);
       const header = {
-          headers: {
-            Authorization: headtoken
-          },
-          params: {
-            countryCode: 'ES'
-          }
-        };
+        headers: {
+          Authorization: headtoken
+        },
+        params: {
+          countryCode: 'ES'
+        }
+      };
       axios.get('https://dev.backoffice.v1.backend.mrjeffapp.net/timetable-service/v1/defaultTimetableConfigurations',
           header)
         .then(response => {
@@ -111,19 +127,27 @@
     methods: {
       request() {
         console.log(this.posts);
-      }
+      },
+
     },
 
-    computed:{
-      drawTable: function(){
-          const firstResult = this.posts.filter(day => day.timetableType === 'LOGISTICS');
-          const secondResult = firstResult.filter(day => {
-            day.defaultTimetableTimeSlotConfiguration.filter(visit => visit.visitTypeCode === 'PICKUP')
-          });
+    computed: {
 
-          return secondResult;
+      drawTable: function () {
+        const firstResult = this.posts.filter(day => day.timetableType === 'LOGISTICS');
+        this.firstResultado = firstResult;
+        return firstResult;
+      },
+      drawSecond: function () {
+        go(this.posts, function (data) {
+          gofinal(data, function (result) {
+            var thirdResult = result.filter(pick => pick.visitTypeCode === 'PICKUP');
+            console.log(JSON.stringify(thirdResult));
+          })
+        })
       }
     }
+
   }
 </script>
 
