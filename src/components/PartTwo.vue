@@ -71,7 +71,7 @@
     <hr>
 
     <div>
-      {{drawTable}}
+      {{draw}}
     </div>
     <hr>
   </div>
@@ -102,6 +102,7 @@
         firstResultado: [],
         secondResultado: [],
         thirdResultado: [],
+        fourthResultado: [],
       }
     },
 
@@ -134,17 +135,21 @@
     computed: {
 
       drawTable: function () {
-        const firstResult = this.posts.filter(day => day.timetableType === 'LOGISTICS');
+        var firstResult = this.posts.filter(day => day.timetableType === 'LOGISTICS');
+        var _twoResult = firstResult.filter(day => day.defaultTimetableTimeSlotConfigurations.length > 0)
+        for (var i = 0; i < _twoResult.length; i++) {
+          var resultf = _twoResult[i].defaultTimetableTimeSlotConfigurations;
+        }
         this.firstResultado = firstResult;
-        return firstResult;
+        this.secondResultado = _twoResult;
+        this.thirdResultado = resultf;
+        return resultf;
       },
-      drawSecond: function () {
-        go(this.posts, function (data) {
-          gofinal(data, function (result) {
-            var thirdResult = result.filter(pick => pick.visitTypeCode === 'PICKUP');
-            console.log(JSON.stringify(thirdResult));
-          })
-        })
+
+      draw: function(){
+        var fourthResult = this.thirdResultado.filter(pick => pick.visitTypeCode === 'PICKUP');
+        this.fourthResultado = fourthResult;
+        return fourthResult;
       }
     }
 
