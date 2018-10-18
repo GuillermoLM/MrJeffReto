@@ -70,13 +70,30 @@
 
     <hr>
 
-    <div>
-      <!-- <button @click="order">Test</button> -->
-      {{takeDaysOfWeek}}
+    <div v-if="ifData">
+      <table border="2">
+        <thread>
+          <tr>
+            <th v-for="obj in dataR" :key="obj.dayOfWeek">
+              <b>{{obj.dayOfWeek}}</b>
+            </th>
+          </tr>
+        </thread>
+        <tbody>
+          <tr>
+            <td v-for="obj in dataR" :key="obj.dayOfWeek">
+              <span class="text" v-for="obj_2 in obj.timeSlotCodes" :key="obj_2">
+                {{obj_2}}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
     <hr>
   </div>
+
 </template>
 
 <script>
@@ -93,7 +110,8 @@
         thirdResultado: [],
         fourthResultado: [],
         dataR: [],
-        timeR: []
+        timeR: [],
+        ifData: false
       }
     },
 
@@ -119,37 +137,15 @@
     methods: {
       request() {
         console.log(this.posts);
-      },
-      // order(){
-      //   for(let i = 0; i < this.firstResultado.length; i++)
-      //   {
-      //     for(let j = 0; j < this.firstResultado[i].defaultTimetableTimeSlotConfigurations.length; j++)
-      //     {
-      //       if(this.firstResultado[i].defaultTimetableTimeSlotConfigurations[i].visitTypeCode=="PICKUP")
-      //       {
-      //           for (let h = 0; h < this.secondResultado.length; h++) 
-      //           {
-      //               if(this.secondResultado[h].dayOfWeek==this.firstResultado[i].dayOfWeek)
-      //               {
-      //                   //console.log("entro"); Hasta aquí entra
-      //                   this.thirdResultado[h].timeSlotCodes.push(this.firstResultado[i].defaultTimetableTimeSlotConfigurations[j].timeSlotCode) //Esto no
-      //               }  
-      //           }
-      //       }
-      //     }
-      //   }
-      // }
-
+      }
     },
 
     computed: {
 
-      drawTable: function () 
-      {
+      drawTable: function () {
         var firstResult = this.posts.filter(day => day.timetableType === 'LOGISTICS');
         var _twoResult = firstResult.filter(day => day.defaultTimetableTimeSlotConfigurations.length > 0)
-        for (var i = 0; i < _twoResult.length; i++) 
-        {
+        for (var i = 0; i < _twoResult.length; i++) {
           var resultf = _twoResult[i].defaultTimetableTimeSlotConfigurations;
         }
         this.firstResultado = firstResult;
@@ -158,32 +154,43 @@
         return resultf;
       },
 
-      draw: function()
-      {
+      draw: function () {
         var fourthResult = this.thirdResultado.filter(pick => pick.visitTypeCode === 'PICKUP');
         this.fourthResultado = fourthResult;
         return fourthResult;
       },
 
-      takeDaysOfWeek: function()
-      {
+      takeDaysOfWeek: function () {
         let aux = 0;
-        for(let i = 0; i < this.posts.length; i++)
-        {
-          if(this.posts[i].timetableType === 'LOGISTICS')
-          {
+        for (let i = 0; i < this.posts.length; i++) {
+          if (this.posts[i].timetableType === 'LOGISTICS') {
             let object = {};
             object.dayOfWeek = this.posts[i].dayOfWeek;
             this.dataR[aux] = object;
             aux++;
-            object=null;
+            object = null;
           }
         }
-        for(let j = 0; j < this.dataR.length; j++)
-        {
+        for (let j = 0; j < this.dataR.length; j++) {
           this.dataR[j].timeSlotCodes = new Array();
         }
         return this.dataR;
+      },
+
+      pickData: function () {
+        for (let h = 0; h < this.firstResultado.length; h++) {
+          for (let g = 0; g < this.firstResultado[h].defaultTimetableTimeSlotConfigurations.length; g++) {
+            if (this.firstResultado[h].defaultTimetableTimeSlotConfigurations[g].visitTypeCode === 'PICKUP') {
+              for (let f = 0; f < this.dataR.length; f++) {
+                if (this.dataR[f].dayOfWeek == this.firstResultado[h].dayOfWeek) {
+                  this.dataR[f].timeSlotCodes.push(this.firstResultado[h].defaultTimetableTimeSlotConfigurations[g].timeSlotCodes)
+                }
+              }
+            }
+          }
+          this.dataR[h].timeSlotCodes.sort();
+        }
+        this.ifData = true;
       }
     }
 
@@ -197,6 +204,10 @@
     flex-direction: column;
     align-items: center;
     width: 75vw;
+  }
+
+  th {
+    padding: 10px;
   }
 
   p {
