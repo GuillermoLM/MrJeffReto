@@ -142,10 +142,12 @@
 
     computed: {
 
-      drawTable: function () {
+      drawTable: function () 
+      {
         var firstResult = this.posts.filter(day => day.timetableType === 'LOGISTICS');
         var _twoResult = firstResult.filter(day => day.defaultTimetableTimeSlotConfigurations.length > 0)
-        for (var i = 0; i < _twoResult.length; i++) {
+        for (var i = 0; i < _twoResult.length; i++) 
+        {
           var resultf = _twoResult[i].defaultTimetableTimeSlotConfigurations;
         }
         this.firstResultado = firstResult;
@@ -154,16 +156,20 @@
         return resultf;
       },
 
-      draw: function () {
+      draw: function () 
+      {
         var fourthResult = this.thirdResultado.filter(pick => pick.visitTypeCode === 'PICKUP');
         this.fourthResultado = fourthResult;
         return fourthResult;
       },
 
-      takeDaysOfWeek: function () {
+      takeDaysOfWeek: function () 
+      {
         let aux = 0;
-        for (let i = 0; i < this.posts.length; i++) {
-          if (this.posts[i].timetableType === 'LOGISTICS') {
+        for (let i = 0; i < this.posts.length; i++) 
+        {
+          if (this.posts[i].timetableType === 'LOGISTICS') 
+          {
             let object = {};
             object.dayOfWeek = this.posts[i].dayOfWeek;
             this.dataR[aux] = object;
@@ -171,18 +177,25 @@
             object = null;
           }
         }
-        for (let j = 0; j < this.dataR.length; j++) {
+        for (let j = 0; j < this.dataR.length; j++) 
+        {
           this.dataR[j].timeSlotCodes = new Array();
         }
         return this.dataR;
       },
 
-      pickData: function () {
-        for (let h = 0; h < this.firstResultado.length; h++) {
-          for (let g = 0; g < this.firstResultado[h].defaultTimetableTimeSlotConfigurations.length; g++) {
-            if (this.firstResultado[h].defaultTimetableTimeSlotConfigurations[g].visitTypeCode === 'PICKUP') {
-              for (let f = 0; f < this.dataR.length; f++) {
-                if (this.dataR[f].dayOfWeek == this.firstResultado[h].dayOfWeek) {
+      pickData: function () 
+      {
+        for (let h = 0; h < this.firstResultado.length; h++) 
+        {
+          for (let g = 0; g < this.firstResultado[h].defaultTimetableTimeSlotConfigurations.length; g++) 
+          {
+            if (this.firstResultado[h].defaultTimetableTimeSlotConfigurations[g].visitTypeCode === 'PICKUP') 
+            {
+              for (let f = 0; f < this.dataR.length; f++) 
+              {
+                if (this.dataR[f].dayOfWeek == this.firstResultado[h].dayOfWeek) 
+                {
                   this.dataR[f].timeSlotCodes.push(this.firstResultado[h].defaultTimetableTimeSlotConfigurations[g].timeSlotCodes)
                 }
               }
