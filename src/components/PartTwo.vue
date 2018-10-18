@@ -71,27 +71,25 @@
     <hr>
 
     <div>
+      <button @click="order">Test</button>
       {{draw}}
     </div>
+
+    <!-- <div v-for="data in fourthResultado" v-bind:key="data.id">
+      <table>
+        <tr>
+          <td>{{data.timeSlotStart}}</td>
+          <td>{{data.timeSlotCode}}</td>
+          <td>{{data.timeSlotEnd}}</td>
+        </tr>
+      </table>
+    </div> -->
     <hr>
   </div>
 </template>
 
 <script>
   import axios from 'axios'
-
-  function go(posts, cb) {
-    var firstResult = posts.filter(day => day.timetableType === 'LOGISTICS');
-    return cb(firstResult);
-  }
-
-  function gofinal(post, cb) {
-    var secondResult = post.filter(day => day.defaultTimetableTimeSlotConfigurations.length > 0);
-    for (var i = 0; i < secondResult.length; i++) {
-      var resultf = secondResult[i].defaultTimetableTimeSlotConfigurations;
-    }
-    return cb(resultf);
-  }
 
   export default {
     name: 'PartTwo',
@@ -103,6 +101,7 @@
         secondResultado: [],
         thirdResultado: [],
         fourthResultado: [],
+        dataR: []
       }
     },
 
@@ -129,6 +128,25 @@
       request() {
         console.log(this.posts);
       },
+      order(){
+        for(let i = 0; i < this.firstResultado.length; i++)
+        {
+          for(let j = 0; j < this.firstResultado[i].defaultTimetableTimeSlotConfigurations.length; j++)
+          {
+            if(this.firstResultado[i].defaultTimetableTimeSlotConfigurations[i].visitTypeCode=="PICKUP")
+            {
+                for (let h = 0; h < this.secondResultado.length; h++) 
+                {
+                    if(this.secondResultado[h].dayOfWeek==this.firstResultado[i].dayOfWeek)
+                    {
+                        //console.log("entro"); Hasta aquí entra
+                        this.thirdResultado[h].timeSlotCodes.push(this.firstResultado[i].defaultTimetableTimeSlotConfigurations[j].timeSlotCode) //Esto no
+                    }  
+                }
+            }
+          }
+        }
+      }
 
     },
 
@@ -137,9 +155,9 @@
       drawTable: function () {
         var firstResult = this.posts.filter(day => day.timetableType === 'LOGISTICS');
         var _twoResult = firstResult.filter(day => day.defaultTimetableTimeSlotConfigurations.length > 0)
-        for (var i = 0; i < _twoResult.length; i++) {
+       for (var i = 0; i < _twoResult.length; i++) {
           var resultf = _twoResult[i].defaultTimetableTimeSlotConfigurations;
-        }
+       }
         this.firstResultado = firstResult;
         this.secondResultado = _twoResult;
         this.thirdResultado = resultf;
@@ -150,7 +168,7 @@
         var fourthResult = this.thirdResultado.filter(pick => pick.visitTypeCode === 'PICKUP');
         this.fourthResultado = fourthResult;
         return fourthResult;
-      }
+      },
     }
 
   }
